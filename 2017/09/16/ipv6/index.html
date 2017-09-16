@@ -138,43 +138,44 @@ OpenWRT 路由器作为 IPv6 网关的配置
 <li>kmod-ipt-nat6</li>
 <li>请使用<code>opkg install 包名</code>安装缺失的软件包</li>
 </ul>
-<h2 id="打开私网地址分配"><a href="#打开私网地址分配" class="headerlink" title="打开私网地址分配"></a>打开私网地址分配</h2><p>由于不同OpenWRT翻译程度不一致，部分设置项可能有不同的名称，请结合具体情况进行配置</p>
-<ul>
+<p>由于不同OpenWRT翻译程度不一致，部分设置页面和设置项可能会有不同的名称，请结合具体情况进行配置</p>
+<h2 id="打开私网地址分配"><a href="#打开私网地址分配" class="headerlink" title="打开私网地址分配"></a>打开私网地址分配</h2><ul>
 <li>网络→接口<ul>
-<li>清空<code>IPv6 ULA-Prefix</code>一栏，保存&amp;应用</li>
+<li>清空<code>IPv6 ULA 前缀</code>一栏，保存&amp;应用</li>
 </ul>
 </li>
-<li>网络→接口→LAN→一般设置→基本设置<ul>
-<li>禁用<code>IPv6分配长度</code></li>
-<li>IPv6地址填写<code>fd00:dcba:9876:5432::1/64</code><ul>
+<li>网络→接口→LAN→一般配置→基本设置<ul>
+<li>将<code>IPv6 分配长度</code>修改为<code>已禁用</code></li>
+<li><code>IPv6 地址</code>填写<code>fd00:dcba:9876:5432::1/64</code><ul>
 <li>这里指的是路由器的ipv6地址，类似ipv4环境下的<code>192.168.1.1</code></li>
 </ul>
 </li>
-<li>IPv6路由前缀填写<code>fd00:dcba:9876:5432::/64</code>（上面的地址去掉末尾的<code>1</code>）<ul>
+<li><code>IPv6 网关</code>留空</li>
+<li><code>IPv6 路由前缀</code>填写<code>fd00:dcba:9876:5432::/64</code>（<code>IPv6 地址</code>去掉末尾的<code>1</code>）<ul>
 <li>该地址为LAN下每个设备分配到的IPV6地址的前缀，类似ipv4环境下的<code>192.168.1.X</code></li>
-<li>除了地址开头的<code>fd</code>外，其余14位可任意修改，由于为私网地址，无须担心冲突问题</li>
+<li>除了地址开头的<code>fd</code>外，其余14位可任意修改，如<code>fd00:2333::/64</code>，由于为私网地址，无须担心冲突问题</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>网络→接口→LAN→DHCP服务器→IPV6设置<ul>
-<li><code>Router Advertisement Servise</code> 设置为<code>服务器模式</code></li>
-<li><code>DHCPv6</code> 设置为<code>服务器模式</code></li>
-<li><code>NDP代理</code>设置为<code>已禁用</code></li>
-<li><code>DHCPv6模式</code>设置为<code>Stateful-only</code></li>
-<li>勾选<code>总是广播默认路由</code></li>
+<li><code>路由通告服务</code> 设置为<code>服务器模式</code></li>
+<li><code>DHCPv6 服务</code> 设置为<code>服务器模式</code></li>
+<li><code>NDP 代理</code>设置为<code>已禁用</code></li>
+<li><code>DHCPv6 模式</code>设置为<code>有状态的</code></li>
+<li>勾选<code>总是通告默认路由</code></li>
 </ul>
 </li>
 <li>保存&amp;应用</li>
 </ul>
 <h2 id="配置防火墙、打开ipv6-NAT"><a href="#配置防火墙、打开ipv6-NAT" class="headerlink" title="配置防火墙、打开ipv6 NAT"></a>配置防火墙、打开ipv6 NAT</h2><ul>
-<li>网络→防火墙→通信规则<ul>
+<li>网络→防火墙→流量规则<ul>
 <li>取消最后一项<code>Allow-ICMPv6-Forward</code>的勾选，保存&amp;应用</li>
 </ul>
 </li>
 <li><p>网络→防火墙→自定义规则</p>
 <ul>
-<li><p>粘贴以下内容，保存&amp;应用</p>
+<li><p>追加以下内容，保存&amp;应用</p>
 <pre><code>WAN6=pppoe-wan
 LAN=br-lan
 ip6tables -t nat -A POSTROUTING -o $WAN6 -j MASQUERADE
