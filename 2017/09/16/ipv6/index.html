@@ -1,0 +1,277 @@
+	<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>西安交通大学校园网环境路由器配置IPV6方案 | Hexo</title>
+  <meta name="author" content="Zhang Songyi">
+  
+  <meta name="description" content="本文适用于西安交通大学校园网环境下在路由器上配置IPV6，也可以用于其他采用PPPoE的校园网环境
+参考链接
+OpenWRT 纯WEB界面配置IPv6 NAT内网转发 教育网原生DHCPv6
+OpenWRT 路由器作为 IPv6 网关的配置
+
+说明
+网络环境：校园网，采用PPPoE拨号方式上网，拨号">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="西安交通大学校园网环境路由器配置IPV6方案"/>
+  <meta property="og:site_name" content="Hexo"/>
+
+  
+  
+		<!-- favicon -->
+		<link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+		<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+		<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+		<link rel="manifest" href="/manifest.json">
+		<meta name="msapplication-TileColor" content="#009688">
+		<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+		<meta name="theme-color" content="#009688">
+		<!-- favicon end -->
+    <!-- <link href="/favicon.ico" rel="icon"> -->
+  
+
+  <!-- toc -->
+  <link rel="stylesheet" href="/libs/tocify/jquery.tocify.css" media="screen" type="text/css">
+
+  <!-- <link rel="stylesheet" href="/libs/bs/css/bootstrap.min.css" media="screen" type="text/css"> -->
+  <link rel="stylesheet" href="//apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" media="screen" type="text/css">
+
+  <!-- material design -->
+	<!-- <link rel="stylesheet" href="/libs/bs-material/css/ripples.min.css" media="screen" type="text/css"> -->
+  <link rel="stylesheet" href="//apps.bdimg.com/libs/bootstrap-material/0.3.0/css/ripples.min.css" media="screen" type="text/css">
+  <!-- <link rel="stylesheet" href="/libs/bs-material/css/material.min.css" media="screen" type="text/css"> -->
+	<link rel="stylesheet" href="//apps.bdimg.com/libs/bootstrap-material/0.3.0/css/material.min.css" media="screen" type="text/css">
+
+  <link rel="stylesheet" href="/css/highlight.light.css" media="screen" type="text/css">
+
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+  
+
+  
+
+  <script src="//apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="/libs/jquery-2.0.3.min.js" type="text/javascript"><\/script>')</script>
+
+</head>
+
+ 	<body>
+	  <nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">菜单</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Hexo</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                
+                <li>
+                    <a href="/" title="">
+                    <i class="fa fa-home"></i>首页
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/archives" title="">
+                    <i class="fa fa-list"></i>存档
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/about" title="">
+                    <i class="fa fa-info-circle"></i>关于
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/atom.xml" title="这是一个订阅源">
+                    <i class="fa fa-rss"></i>RSS
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+	  <div class="container" >
+	    <div class="row">
+	
+	<div class="col-md-9 center-content">
+	
+
+		<div class="content">
+			<!-- index -->
+		   
+
+			  		<h2>西安交通大学校园网环境路由器配置IPV6方案</h2>
+					
+					<div>
+						<span class="post-time">2017-09-16 21:46:31</span>
+					</div>	
+					
+
+					<div class="article-content">
+						<p>本文适用于西安交通大学校园网环境下在路由器上配置IPV6，也可以用于其他采用PPPoE的校园网环境</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="http://blog.sina.com.cn/s/blog_6566538d0102wkx1.html" target="_blank" rel="external">OpenWRT 纯WEB界面配置IPv6 NAT内网转发 教育网原生DHCPv6</a></li>
+<li><a href="https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md" target="_blank" rel="external">OpenWRT 路由器作为 IPv6 网关的配置</a></li>
+</ul>
+<h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><ul>
+<li>网络环境：校园网，采用PPPoE拨号方式上网，拨号完成后获取前缀长度<code>/128</code>的ipv6地址<ul>
+<li>这种地址结构导致无法采用诸如NDP的方案进行内网地址分配</li>
+</ul>
+</li>
+<li>硬件环境：刷OpenWRT的路由器（本文采用的环境是斐讯K2P，刷入固件<code>PandoraBox-ralink-mt7621-k2p-2017-09-04-git-710eafebf-squashfs-sysupgrade.bin</code>）<ul>
+<li>K2P刷固件教程参见<a href="https://post.smzdm.com/p/593059/" target="_blank" rel="external">这里</a>，其余路由器刷固件方案请自行百度</li>
+</ul>
+</li>
+<li>假定已经能采用SSH或其他方式正常连接至路由器</li>
+</ul>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><h2 id="软件包依赖"><a href="#软件包依赖" class="headerlink" title="软件包依赖"></a>软件包依赖</h2><ul>
+<li>ip6tables</li>
+<li>kmod-ipt-nat6</li>
+<li>请使用<code>opkg install 包名</code>安装缺失的软件包</li>
+</ul>
+<h2 id="打开私网地址分配"><a href="#打开私网地址分配" class="headerlink" title="打开私网地址分配"></a>打开私网地址分配</h2><p>由于不同OpenWRT翻译程度不一致，部分设置项可能有不同的名称，请结合具体情况进行配置</p>
+<ul>
+<li>网络→接口<ul>
+<li>清空<code>IPv6 ULA-Prefix</code>一栏，保存&amp;应用</li>
+</ul>
+</li>
+<li>网络→接口→LAN→一般设置→基本设置<ul>
+<li>禁用<code>IPv6分配长度</code></li>
+<li>IPv6地址填写<code>fd00:dcba:9876:5432::1/64</code><ul>
+<li>这里指的是路由器的ipv6地址，类似ipv4环境下的<code>192.168.1.1</code></li>
+</ul>
+</li>
+<li>IPv6路由前缀填写<code>fd00:dcba:9876:5432::/64</code>（上面的地址去掉末尾的<code>1</code>）<ul>
+<li>该地址为LAN下每个设备分配到的IPV6地址的前缀，类似ipv4环境下的<code>192.168.1.X</code></li>
+<li>除了地址开头的<code>fd</code>外，其余14位可任意修改，由于为私网地址，无须担心冲突问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>网络→接口→LAN→DHCP服务器→IPV6设置<ul>
+<li><code>Router Advertisement Servise</code> 设置为<code>服务器模式</code></li>
+<li><code>DHCPv6</code> 设置为<code>服务器模式</code></li>
+<li><code>NDP代理</code>设置为<code>已禁用</code></li>
+<li><code>DHCPv6模式</code>设置为<code>Stateful-only</code></li>
+<li>勾选<code>总是广播默认路由</code></li>
+</ul>
+</li>
+<li>保存&amp;应用</li>
+</ul>
+<h2 id="配置防火墙、打开ipv6-NAT"><a href="#配置防火墙、打开ipv6-NAT" class="headerlink" title="配置防火墙、打开ipv6 NAT"></a>配置防火墙、打开ipv6 NAT</h2><ul>
+<li>网络→防火墙→通信规则<ul>
+<li>取消最后一项<code>Allow-ICMPv6-Forward</code>的勾选，保存&amp;应用</li>
+</ul>
+</li>
+<li><p>网络→防火墙→自定义规则</p>
+<ul>
+<li><p>粘贴以下内容，保存&amp;应用</p>
+<pre><code>WAN6=pppoe-wan
+LAN=br-lan
+ip6tables -t nat -A POSTROUTING -o $WAN6 -j MASQUERADE
+ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+ip6tables -A FORWARD -i $LAN -j ACCEPT
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<h2 id="配置ipv6默认网关"><a href="#配置ipv6默认网关" class="headerlink" title="配置ipv6默认网关"></a>配置ipv6默认网关</h2><ul>
+<li><p>新建脚本文件<code>/etc/hotplug.d/iface/99-ipv6</code>，填入以下内容</p>
+<pre><code>#!/bin/sh
+[ &quot;$ACTION&quot; = ifup ] || exit 0
+iface=wan_6
+[ -z &quot;$iface&quot; -o &quot;$INTERFACE&quot; = &quot;$iface&quot; ] || exit 0
+ip -6 route add `ip -6 route show default|sed -e &apos;s/from [^ ]* //&apos;`
+logger -t IPv6 &quot;Add IPv6 default route.&quot;
+</code></pre><ul>
+<li><p>注意在<a href="https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md" target="_blank" rel="external">OpenWRT 路由器作为 IPv6 网关的配置</a>一文中，该配置文件第三行为<code>iface=wan6</code>，但在本文环境下，实际接口名为<code>wan_6</code>（在<code>网络→接口</code>中显示的名称仍为<code>wan6</code>）。可以尝试先在<code>/etc/hotplug.d/iface/99-ipv6</code>内填入</p>
+<pre><code>#!/bin/sh
+[ &quot;$ACTION&quot; = ifup ] || exit 0
+logger -t IPv6 &quot;$INTERFACE&quot;
+</code></pre><p>观察系统日志输出确认ipv6接口的实际名称</p>
+</li>
+</ul>
+</li>
+<li><p>给脚本赋可执行权限，执行<code>chmod +x /etc/hotplug.d/iface/99-ipv6</code></p>
+</li>
+</ul>
+<h2 id="重启路由器"><a href="#重启路由器" class="headerlink" title="重启路由器"></a>重启路由器</h2><h2 id="测试IPV6状态"><a href="#测试IPV6状态" class="headerlink" title="测试IPV6状态"></a>测试IPV6状态</h2><ul>
+<li>访问<a href="http://ipv6-test.com/" target="_blank" rel="external">这里</a>，如果<code>IPv6 connectivity</code>区域显示为<code>Supported</code>则表示配置成功</li>
+<li>如果有任何问题可以留言咨询</li>
+</ul>
+
+					</div>
+
+			  <!-- about -->
+			  
+		</div>
+
+		<!-- pagination -->
+	  
+
+		<div class="comment-section">
+  
+  
+
+
+</div>
+	</div>
+
+	
+
+</div>
+
+
+		<footer>
+			
+
+<p>
+  由 <a href="https://hexo.io">hexo</a> 强力驱动 | 搭载 <a href="https://github.com/wayou/hexo-theme-material">material</a> 主题
+</p>
+<p>
+  &copy; 2017 <a href="http://yoursite.com"> Zhang Songyi </a>
+</p>
+<a id="gotop" href="#" title="back to top"><i class="mdi-hardware-keyboard-arrow-up"></i></a>
+
+		</footer>
+	  </div>
+
+		<!-- <script src="/libs/bs/js/bootstrap.min.js"></script> -->
+		<script src="//apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script>(typeof $().modal == 'function')|| document.write('<script src="/libs/bs/js/bootstrap.min.js" type="text/javascript"><\/script>')</script>
+
+		<!-- material design -->
+		<!-- <script src="/libs/bs-material/js/ripples.min.js"></script> -->
+		<script src="//apps.bdimg.com/libs/bootstrap-material/0.3.0/js/ripples.min.js"></script>
+		<!-- <script src="/libs/bs-material/js/material.min.js"></script> -->
+		<script src="//apps.bdimg.com/libs/bootstrap-material/0.3.0/js/material.min.js"></script>
+		<!-- toc -->
+		<!-- <script src="/libs/tocify/jquery-ui.min.js"></script> -->
+		<script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+		<script src="/libs/tocify/jquery.tocify.custom.js"></script>
+
+		<script src="/js/main.js"></script>
+
+	</body>
+</html>
